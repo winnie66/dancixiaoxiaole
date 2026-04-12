@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  background: #fff5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+.bubble {
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 80px;
+}
+.bubble:active {
+  transform: scale(0.92);
+}
+.bubble.selected {
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(255,153,0,0.6);
+}
+.vanish {
+  animation: vanish 0.6s ease forwards;
+}
+@keyframes vanish {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-5 px-4">
+<div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
+</div>
+
+<div id="container" class="w-full max-w-[380px] grid grid-cols-4 gap-3 mb-6"></div>
+
+<button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
+  继续游戏
+</button>
+<script>
+  
+const wordList = [
+    { en: "ear", cn: "耳朵" },
+    { en: "hand", cn: "手" },
+    { en: "eye", cn: "眼睛" },
+    { en: "mouth", cn: "嘴" },
+    { en: "arm", cn: "胳膊" },
+    { en: "can", cn: "可以" },
+    { en: "share", cn: "分享" },
+    { en: "listen", cn: "听" },
+    { en: "help", cn: "帮助" },
+    { en: "say", cn: "说，讲" },
+    { en: "toy", cn: "玩具" },
+    { en: "friend", cn: "朋友" },
+    { en: "mum", cn: "妈妈" },
+    { en: "dad", cn: "爸爸" },
+    { en: "grandma", cn: "奶奶" },
+    { en: "grandpa", cn: "爷爷" },
+    { en: "grandfather", cn: "爷爷" },
+    { en: "grandmother", cn: "奶奶" },
+{ en: "mother", cn: "母亲" },
+  { en: "father", cn: "父亲" },
+  { en: "me", cn: "我" },
+  { en: "sister", cn: "姐；妹" },
+  { en: "family", cn: "家庭" },
+  { en: "have", cn: "有" },
+  { en: "big", cn: "大的" },
+  { en: "cousin", cn: "表亲" },
+  { en: "brother", cn: "哥；弟" },
+  { en: "baby", cn: "婴儿" },
+  { en: "uncle", cn: "伯父，叔叔" },
+  { en: "aunt", cn: "伯母，婶婶" },
+  { en: "some", cn: "一些" },
+  { en: "small", cn: "小的" },
+  { en: "like", cn: "喜欢" },
+  { en: "cat", cn: "猫" },
+  { en: "dog", cn: "狗" },
+  { en: "monkey", cn: "猴子" },
+  { en: "panda", cn: "熊猫" },
+  { en: "bird", cn: "鸟" },
+  { en: "tiger", cn: "老虎" },
+  { en: "zoo", cn: "动物园" },
+  { en: "pet", cn: "宠物" },
+  { en: "fish", cn: "鱼" },
+  { en: "rabbit", cn: "兔子" },
+  { en: "go", cn: "去；走" },
+{ en: "fox", cn: "狐狸" },
+{ en: "Miss", cn: "女老师；女士" },
+{ en: "red panda", cn: "小熊猫" },
+{ en: "cute", cn: "可爱的" },
+{ en: "elephant", cn: "大象" },
+{ en: "lion", cn: "狮子" },
+{ en: "animal", cn: "动物" },
+{ en: "giraffe", cn: "长颈鹿" },
+{ en: "tall", cn: "高的" },
+{ en: "fast", cn: "快的" }];
+
+let usedWords = [];
+let currentWords = [];
+let score = 0;
+let selected = null;
+let locked = false;
+let time = 0;
+let timer;
+let timerRunning = false;
+
+function formatTime(s) {
+  const m = String(Math.floor(s / 60)).padStart(2, '0');
+  const sec = String(s % 60).padStart(2, '0');
+  return m + ":" + sec;
+}
+
+function speak(text, lang) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  utter.rate = 0.9;
+  speechSynthesis.speak(utter);
+}
+
+function getTenWords() {
+  const pool = wordList.filter(w => !usedWords.includes(w.en));
+  if (pool.length === 0) {
+    alert("🎉 恭喜你！已完成全部单词练习！");
+    return null;
+  }
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const ten = shuffled.slice(0, 10);
+  usedWords.push(...ten.map(w => w.en));
+  return ten;
+}
+
+function render() {
+  const container = document.getElementById("container");
+  container.innerHTML = "";
+  selected = null;
+  locked = false;
+
+  const ens = currentWords.map(w => ({ type: "en", text: w.en, match: w.cn }));
+  const cns = currentWords.map(w => ({ type: "cn", text: w.cn, match: w.en }));
+  const all = [...ens, ...cns].sort(() => Math.random() - 0.5);
+
+  all.forEach(item => {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble flex items-center justify-center rounded-full font-bold shadow-md aspect-square " +
+      (item.type === "en" ? "bg-pink-300 text-lg" : "bg-green-300 text-base");
+    bubble.textContent = item.text;
+
+    bubble.addEventListener("click", () => {
+      if (locked || bubble.classList.contains("vanish")) return;
+      if (bubble === selected?.bubble) return;
+
+      item.type === "en" ? speak(item.text, "en-US") : speak(item.text, "zh-CN");
+
+      if (!selected) {
+        selected = { bubble, matchText: item.match };
+        bubble.classList.add("selected");
+        return;
+      }
+
+      locked = true;
+      if (selected.matchText === item.text && item.match === selected.bubble.textContent) {
+        selected.bubble.classList.add("vanish");
+        bubble.classList.add("vanish");
+        score += 10;
+        document.getElementById("score").textContent = score;
+        setTimeout(() => {
+          selected = null;
+          locked = false;
+          checkFinish();
+        }, 600);
+      } else {
+        setTimeout(() => {
+          selected.bubble.classList.remove("selected");
+          selected = null;
+          locked = false;
+        }, 400);
+      }
+    });
+    container.appendChild(bubble);
+  });
+}
+
+function checkFinish() {
+  if (document.querySelectorAll(".vanish").length === 20) {
+    clearInterval(timer);
+    document.getElementById("restart").classList.remove("hidden");
+  }
+}
+
+function start() {
+  currentWords = getTenWords();
+  if (!currentWords) return;
+  render();
+  document.getElementById("restart").classList.add("hidden");
+  if (!timerRunning) {
+    timerRunning = true;
+    timer = setInterval(() => {
+      time++;
+      document.getElementById("timer").textContent = formatTime(time);
+    }, 1000);
+  }
+}
+
+document.getElementById("restart").onclick = start;
+window.onload = start;
+</script>
+</body>
+</html>

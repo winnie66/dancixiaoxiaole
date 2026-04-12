@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+	<div class="flex items-center">
+	  <button onclick="jump('threeUp1_3.html')" class="bg-gray-200 px-4 py-2 rounded-full">三上1-3</button>
+	  <button onclick="jump('threeUp4_6.html')" class="bg-gray-200 px-4 py-2 rounded-full">三上4-6</button>
+	  <button onclick="jump('threeDown1_3.html')" class="bg-gray-200 px-4 py-2 rounded-full">三下1-3</button>
+	  <button onclick="jump('threeDown4_6.html')" class="bg-gray-200 px-4 py-2 rounded-full">三下4-6</button>
+	</div>
+	<iframe id="page" style="width:100%;min-height: 800px" src="./threeUp1_3.html"></iframe>
+	<script>
+		function jump(url){
+		  const element = document.getElementById('page');
+		  element.src = url;
+		}
+	</script>
+    <script src="1.js"></script>
+</body>
+</html>

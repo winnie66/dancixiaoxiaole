@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  background: #fff5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+.bubble {
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 80px;
+}
+.bubble:active {
+  transform: scale(0.92);
+}
+.bubble.selected {
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(255,153,0,0.6);
+}
+.vanish {
+  animation: vanish 0.6s ease forwards;
+}
+@keyframes vanish {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-5 px-4">
+<div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
+</div>
+
+<div id="container" class="w-full max-w-[380px] grid grid-cols-4 gap-3 mb-6"></div>
+
+<button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
+  继续游戏
+</button>
+<script>
+  
+const wordList = [
+{en: "where", cn: "在哪里"},
+    {en: "from", cn: "来自"},
+    {en: "about", cn: "大约；左右"},
+    {en: "today", cn: "今天"},
+    {en: "teacher", cn: "教师"},
+    {en: "student", cn: "学生"},
+    {en: "after", cn: "在…… 后面"},
+    {en: "who", cn: "谁；什么人"},
+    {en: "girl", cn: "女孩"},
+    {en: "neighbour", cn: "邻居"},
+    {en: "boy", cn: "男孩"},
+    {en: "woman", cn: "成年女子；妇女"},
+    {en: "man", cn: "成年男子；男人"},
+    {en: "Mr", cn: "先生"},
+    {en: "classmate", cn: "同班同学"},
+    {en: "he", cn: "他"},
+    {en: "English", cn: "英语的；英语"},
+    {en: "she", cn: "她"},
+    {en: "very", cn: "很；非常"},
+    {en: "UK", cn: "英国"},
+    {en: "China", cn: "中国"},
+    {en: "Canada", cn: "加拿大"},
+    {en: "USA", cn: "美国"},
+  //unit2
+  {en: "has", cn: "具有"},
+  {en: "long", cn: "长的"},
+  {en: "body", cn: "身体"},
+  {en: "short", cn: "短的；矮的"},
+  {en: "leg", cn: "腿"},
+  {en: "right", cn: "正确的"},
+  {en: "fat", cn: "肥胖的"},
+  {en: "thin", cn: "瘦的"},
+  {en: "slow", cn: "缓慢的"},
+  {en: "love", cn: "喜爱；爱"},
+  {en: "tail", cn: "尾巴"},
+  {en: "her", cn: "她；她的"},
+  {en: "gift", cn: "礼物"},
+  {en: "picture", cn: "图画；绘画"},
+  {en: "card", cn: "贺卡；卡片"},
+  {en: "sing", cn: "唱歌"},
+  {en: "dance", cn: "跳舞"},
+  {en: "face", cn: "脸；面孔"},
+  {en: "all", cn: "所有；全部"},
+  {en: "so", cn: "这么，那么"},
+  {en: "talk", cn: "讲，说"},
+  {en: "song", cn: "歌；歌曲"},
+  {en: "or", cn: "或者"},
+  {en: "much", cn: "许多；大量"},
+  //unit3
+  {en: "eraser", cn: "橡皮"},
+  {en: "find", cn: "找到；找回"},
+  {en: "ruler", cn: "直尺"},
+  {en: "pen", cn: "钢笔"},
+  {en: "pencil", cn: "铅笔"},
+  {en: "book", cn: "书；书籍"},
+  {en: "bag", cn: "包；袋"},
+  {en: "paper", cn: "纸"},
+  {en: "these", cn: "这些"},
+  {en: "see", cn: "看见"},
+  {en: "smell", cn: "闻（气味）"},
+  {en: "taste", cn: "尝（味道）"},
+  {en: "hear", cn: "听见；听到"},
+  {en: "touch", cn: "触摸；碰"},
+  {en: "learn", cn: "学；学习"},
+  {en: "nose", cn: "鼻；鼻子"},
+  {en: "tongue", cn: "舌；舌头"},
+  {en: "class", cn: "课；班级"},
+  {en: "in class", cn: "在课堂上"},
+  {en: "computer", cn: "计算机；电脑"}
+];
+
+let usedWords = [];
+let currentWords = [];
+let score = 0;
+let selected = null;
+let locked = false;
+let time = 0;
+let timer;
+let timerRunning = false;
+
+function formatTime(s) {
+  const m = String(Math.floor(s / 60)).padStart(2, '0');
+  const sec = String(s % 60).padStart(2, '0');
+  return m + ":" + sec;
+}
+
+function speak(text, lang) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  utter.rate = 0.9;
+  speechSynthesis.speak(utter);
+}
+
+function getTenWords() {
+  const pool = wordList.filter(w => !usedWords.includes(w.en));
+  if (pool.length === 0) {
+    alert("🎉 恭喜你！已完成全部单词练习！");
+    return null;
+  }
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const ten = shuffled.slice(0, 10);
+  usedWords.push(...ten.map(w => w.en));
+  return ten;
+}
+
+function render() {
+  const container = document.getElementById("container");
+  container.innerHTML = "";
+  selected = null;
+  locked = false;
+
+  const ens = currentWords.map(w => ({ type: "en", text: w.en, match: w.cn }));
+  const cns = currentWords.map(w => ({ type: "cn", text: w.cn, match: w.en }));
+  const all = [...ens, ...cns].sort(() => Math.random() - 0.5);
+
+  all.forEach(item => {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble flex items-center justify-center rounded-full font-bold shadow-md aspect-square " +
+      (item.type === "en" ? "bg-pink-300 text-lg" : "bg-green-300 text-base");
+    bubble.textContent = item.text;
+
+    bubble.addEventListener("click", () => {
+      if (locked || bubble.classList.contains("vanish")) return;
+      if (bubble === selected?.bubble) return;
+
+      item.type === "en" ? speak(item.text, "en-US") : speak(item.text, "zh-CN");
+
+      if (!selected) {
+        selected = { bubble, matchText: item.match };
+        bubble.classList.add("selected");
+        return;
+      }
+
+      locked = true;
+      if (selected.matchText === item.text && item.match === selected.bubble.textContent) {
+        selected.bubble.classList.add("vanish");
+        bubble.classList.add("vanish");
+        score += 10;
+        document.getElementById("score").textContent = score;
+        setTimeout(() => {
+          selected = null;
+          locked = false;
+          checkFinish();
+        }, 600);
+      } else {
+        setTimeout(() => {
+          selected.bubble.classList.remove("selected");
+          selected = null;
+          locked = false;
+        }, 400);
+      }
+    });
+    container.appendChild(bubble);
+  });
+}
+
+function checkFinish() {
+  if (document.querySelectorAll(".vanish").length === 20) {
+    clearInterval(timer);
+    document.getElementById("restart").classList.remove("hidden");
+  }
+}
+
+function start() {
+  currentWords = getTenWords();
+  if (!currentWords) return;
+  render();
+  document.getElementById("restart").classList.add("hidden");
+  if (!timerRunning) {
+    timerRunning = true;
+    timer = setInterval(() => {
+      time++;
+      document.getElementById("timer").textContent = formatTime(time);
+    }, 1000);
+  }
+}
+
+document.getElementById("restart").onclick = start;
+window.onload = start;
+</script>
+</body>
+</html>
