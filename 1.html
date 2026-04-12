@@ -20,7 +20,7 @@ body {
 .bubble {
   transition: all 0.25s ease;
   position: relative;
-  min-height:80px;
+  min-height: 80px;
 }
 .bubble:active {
   transform: scale(0.92);
@@ -40,7 +40,10 @@ body {
 </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-5 px-4">
-
+<div class="flex justify-between items-center">
+  <button class="bg-gray-200 text-white px-4 py-2 rounded-full">三上</button>
+  <button class="bg-gray-200 text-white px-4 py-2 rounded-full">三下</button>
+</div>
 <div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
   <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
   <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
@@ -51,62 +54,90 @@ body {
 <button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
   继续游戏
 </button>
-
+<script src="./1.js"></script>
 <script>
-const wordList = [
-  { en: "pen", cn: "钢笔" },
-  { en: "pencil", cn: "铅笔" },
-  { en: "eraser", cn: "橡皮" },
-  { en: "ruler", cn: "尺子" },
-  { en: "crayon", cn: "蜡笔" },
-  { en: "bag", cn: "包" },
-  { en: "pencil box", cn: "铅笔盒" },
-  { en: "book", cn: "书" },
-  { en: "red", cn: "红色" },
-  { en: "green", cn: "绿色" },
-  { en: "yellow", cn: "黄色" },
-  { en: "blue", cn: "蓝色" },
-  { en: "black", cn: "黑色" },
-  { en: "white", cn: "白色" },
-  { en: "orange", cn: "橙色" },
-  { en: "brown", cn: "棕色" },
-  { en: "cat", cn: "猫" },
-  { en: "dog", cn: "狗" },
-  { en: "monkey", cn: "猴子" },
-  { en: "bird", cn: "鸟" },
-  { en: "tiger", cn: "老虎" },
-  { en: "panda", cn: "大熊猫" },
-  { en: "zoo", cn: "动物园" },
-  { en: "one", cn: "一" },
-  { en: "two", cn: "二" },
-  { en: "three", cn: "三" },
-  { en: "four", cn: "四" },
-  { en: "five", cn: "五" },
-  { en: "six", cn: "六" },
-  { en: "seven", cn: "七" },
-  { en: "eight", cn: "八" },
-  { en: "nine", cn: "九" },
-  { en: "ten", cn: "十" },
-  { en: "face", cn: "脸" },
-  { en: "ear", cn: "耳朵" },
-  { en: "eye", cn: "眼睛" },
-  { en: "nose", cn: "鼻子" },
-  { en: "mouth", cn: "嘴" },
-  { en: "arm", cn: "胳膊" },
-  { en: "hand", cn: "手" },
-  { en: "head", cn: "头" },
-  { en: "body", cn: "身体" },
-  { en: "leg", cn: "腿" },
-  { en: "foot", cn: "脚" },
-  { en: "cake", cn: "蛋糕" },
-  { en: "bread", cn: "面包" },
-  { en: "juice", cn: "果汁" },
-  { en: "milk", cn: "牛奶" },
-  { en: "water", cn: "水" },
-  { en: "fish", cn: "鱼" },
-  { en: "rice", cn: "米饭" }
-];
+  
+let wordList=[]
+wordList=arr[0]
+// const wordList = [
+//   { en: "pen", cn: "钢笔" },
+//   { en: "pencil", cn: "铅笔" },
+//   { en: "eraser", cn: "橡皮" },
+//   { en: "ruler", cn: "尺子" },
+//   { en: "crayon", cn: "蜡笔" },
+//   { en: "bag", cn: "包" },
+//   { en: "pencil box", cn: "铅笔盒" },
+//   { en: "book", cn: "书" },
+//   { en: "red", cn: "红色" },
+//   { en: "green", cn: "绿色" },
+//   { en: "yellow", cn: "黄色" },
+//   { en: "blue", cn: "蓝色" },
+  // { en: "black", cn: "黑色" },
+  // { en: "white", cn: "白色" },
+  // { en: "orange", cn: "橙色" },
+  // { en: "brown", cn: "棕色" },
+  // { en: "cat", cn: "猫" },
+  // { en: "dog", cn: "狗" },
+  // { en: "monkey", cn: "猴子" },
+  // { en: "bird", cn: "鸟" },
+  // { en: "tiger", cn: "老虎" },
+  // { en: "panda", cn: "大熊猫" },
+  // { en: "zoo", cn: "动物园" },
+  // { en: "one", cn: "一" },
+  // { en: "two", cn: "二" },
+  // { en: "three", cn: "三" },
+  // { en: "four", cn: "四" },
+  // { en: "five", cn: "五" },
+  // { en: "six", cn: "六" },
+  // { en: "seven", cn: "七" },
+  // { en: "eight", cn: "八" },
+  // { en: "nine", cn: "九" },
+  // { en: "ten", cn: "十" },
+  // { en: "face", cn: "脸" },
+  // { en: "ear", cn: "耳朵" },
+  // { en: "eye", cn: "眼睛" },
+  // { en: "nose", cn: "鼻子" },
+  // { en: "mouth", cn: "嘴" },
+  // { en: "arm", cn: "胳膊" },
+  // { en: "hand", cn: "手" },
+//   { en: "head", cn: "头" },
+//   { en: "body", cn: "身体" },
+//   { en: "leg", cn: "腿" },
+//   { en: "foot", cn: "脚" },
+//   { en: "cake", cn: "蛋糕" },
+//   { en: "bread", cn: "面包" },
+//   { en: "juice", cn: "果汁" },
+//   { en: "milk", cn: "牛奶" },
+//   { en: "water", cn: "水" },
+//   { en: "fish", cn: "鱼" },
+//   { en: "rice", cn: "米饭" }
+// ];
 
+function selectGrade(){
+  const elements = document.querySelectorAll('.bg-gray-200')
+  elements.forEach((element, index) => {
+    element.addEventListener('click', function() {
+        console.log(index);
+        wordList=arr[index]
+        // console.log(wordList)
+        // getTenWords()
+        // render()
+        start()
+    });
+});
+  // for (var i = 0; i <arr1.length; i++) {
+  //   arr1[i].addEventListener("click", (item,i) => {
+  //     console.log(i)
+  //     wordList=arr[i]
+  //     console.log(wordList)
+  //     // setTimeout(){
+
+  //     // }
+  //     // getTenWords()
+  //   })
+  // }
+}
+selectGrade()
 let usedWords = [];
 let currentWords = [];
 let score = 0;
@@ -130,7 +161,9 @@ function speak(text, lang) {
 }
 
 function getTenWords() {
+  console.log(wordList)
   const pool = wordList.filter(w => !usedWords.includes(w.en));
+  console.log(pool)
   if (pool.length === 0) {
     alert("🎉 恭喜你！已完成全部单词练习！");
     return null;
@@ -211,6 +244,7 @@ function start() {
       document.getElementById("timer").textContent = formatTime(time);
     }, 1000);
   }
+  selectGrade()
 }
 
 document.getElementById("restart").onclick = start;
