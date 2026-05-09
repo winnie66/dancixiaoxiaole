@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  background: #fff5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+.bubble {
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 45px;
+}
+.bubble:active {
+  transform: scale(0.92);
+}
+.bubble.selected {
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(255,153,0,0.6);
+}
+.vanish {
+  animation: vanish 0.6s ease forwards;
+}
+@keyframes vanish {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-5 px-4">
+<div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
+</div>
+
+<div id="container" class="w-full max-w-[380px] grid grid-cols-2 gap-3 mb-6"></div>
+
+<button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
+  继续游戏
+</button>
+<script src="phrase.js"></script>
+<script>
+  
+const wordList = [
+     // Unit 4
+    { en: "like the farm", cn: "喜欢农场" },
+    { en: "many things", cn: "很多东西" },
+    { en: "plant trees", cn: "种树" },
+    { en: "give us apples", cn: "给我们苹果" },
+    { en: "make some cards", cn: "做一些卡片" },
+    { en: "water the flowers", cn: "浇花" },
+    { en: "fruit tree", cn: "果树" },
+    { en: "fresh air", cn: "新鲜空气" },
+    { en: "the school gardens", cn: "学校花园" },
+    { en: "help plants grow", cn: "帮助植物生长" },
+    { en: "grow a tree", cn: "种一棵树" },
+    // Unit 5
+    { en: "different colours", cn: "不同的颜色" },
+    { en: "blue sea", cn: "蓝色的海" },
+    { en: "draw some flowers", cn: "画一些花" },
+    { en: "sit down", cn: "坐下" },
+    { en: "touch the ground", cn: "摸摸地面" },
+    { en: "green grass", cn: "青草" },
+    { en: "a brown bear", cn: "一只棕色的熊" },
+    { en: "here and there", cn: "到处" },
+    { en: "turn around", cn: "转个圈" },
+    { en: "jump up and down", cn: "上下跳" },
+    // Unit 6
+    { en: "how old", cn: "多少岁" },
+    { en: "use numbers", cn: "使用数字" },
+    { en: "eat cake", cn: "吃蛋糕" },
+    { en: "two legs", cn: "两条腿" },
+    { en: "happy birthday", cn: "生日快乐" },
+    { en: "count", cn: "数数" },
+    { en: "useful numbers", cn: "有用的数字" },
+    { en: "birthday card", cn: "生日卡片" },
+    { en: "how many", cn: "多少个" },
+    { en: "jump up", cn: "跳起来" },
+    { en: "ten yuan", cn: "十元钱" },
+    { en: "five years old", cn: "五岁" },
+    { en: "go to the shop", cn: "去商店" },
+    { en: "from one to ten", cn: "从一到十" },
+    { en: "what about...", cn: "怎么样" }];
+</script>
+</body>
+</html>

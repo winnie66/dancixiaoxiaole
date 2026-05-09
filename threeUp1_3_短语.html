@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  background: #fff5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+.bubble {
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 45px;
+}
+.bubble:active {
+  transform: scale(0.92);
+}
+.bubble.selected {
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(255,153,0,0.6);
+}
+.vanish {
+  animation: vanish 0.6s ease forwards;
+}
+@keyframes vanish {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-5 px-4">
+<div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
+</div>
+
+<div id="container" class="w-full max-w-[380px] grid grid-cols-2 gap-3 mb-6"></div>
+
+<button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
+  继续游戏
+</button>
+<script src="phrase.js"></script>
+<script>
+  
+const wordList = [
+     { en: "share books", cn: "分享书" },
+    { en: "share food", cn: "分享食物" },
+    { en: "a good friend", cn: "一个好朋友" },
+    { en: "play fair", cn: "公平" },
+    { en: "play together", cn: "一起玩" },
+    { en: "point to", cn: "指向" },
+    { en: "wave your arm", cn: "挥动你的胳膊" },
+    { en: "share toys", cn: "分享玩具" },
+    { en: "listen with care", cn: "倾听" },
+    { en: "shake hands", cn: "握手" },
+    { en: "make friends", cn: "交朋友" },
+    { en: "help each other", cn: "相互帮助" },
+    { en: "look into", cn: "看着" },
+    { en: "wave your hand", cn: "挥动你的手" },
+    // Unit 2
+    { en: "play with", cn: "和...一起玩" },
+    { en: "love each other", cn: "爱彼此" },
+    { en: "a family tree", cn: "家谱" },
+    { en: "your sister", cn: "你的姐姐" },
+    { en: "share with", cn: "和...分享" },
+    { en: "family love", cn: "家人之爱" },
+    { en: "talk with", cn: "和...交谈" },
+    { en: "a big family", cn: "一个大家庭" },
+    { en: "different families", cn: "不同的家庭" },
+    { en: "family members", cn: "家庭成员" },
+    // Unit 3
+    { en: "wild animals", cn: "野生动物" },
+    { en: "your dog", cn: "你的狗" },
+    { en: "pet shop", cn: "宠物店" },
+    { en: "amazing animals", cn: "神奇的动物" },
+    { en: "hop like a rabbit", cn: "像兔子一样跳" },
+    { en: "an animal picture book", cn: "一本动物图册" },
+    { en: "have a pet", cn: "有一个宠物" },
+    { en: "go to the zoo", cn: "去动物园" },
+    { en: "a red panda", cn: "一只小熊猫" },
+    { en: "run like a dog", cn: "像一条狗一样跑" },
+    { en: "sing like a bird", cn: "像鸟一样唱歌" },
+    { en: "swim like a fish", cn: "像鱼一样游" },
+    { en: "live with us", cn: "和我们居住" }]
+</script>
+</body>
+</html>

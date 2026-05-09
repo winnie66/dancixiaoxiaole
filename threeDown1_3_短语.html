@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  background: #fff5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+.bubble {
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 45px;
+}
+.bubble:active {
+  transform: scale(0.92);
+}
+.bubble.selected {
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(255,153,0,0.6);
+}
+.vanish {
+  animation: vanish 0.6s ease forwards;
+}
+@keyframes vanish {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-5 px-4">
+<div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
+</div>
+
+<div id="container" class="w-full max-w-[380px] grid grid-cols-2 gap-3 mb-6"></div>
+
+<button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
+  继续游戏
+</button>
+<script src="phrase.js"></script>
+<script>
+  
+const wordList = [
+    // 第一单元
+    { en: "go out", cn: "出去" },
+    { en: "new friends", cn: "新朋友" },
+    { en: "make a cake", cn: "做蛋糕" },
+    { en: "play a game", cn: "玩游戏" },
+    { en: "my English teacher", cn: "我的英语老师" },
+    { en: "take a look at...", cn: "看..." },
+    { en: "welcome to...", cn: "欢迎到..." },
+    { en: "my new neighbour", cn: "我的新邻居" },
+    { en: "my classmate", cn: "我的同班同学" },
+    { en: "Let me help", cn: "我来帮忙" },
+    { en: "After you", cn: "您先请" },
+    { en: "You’re welcome", cn: "别客气" },
+    // 第二单元
+    { en: "short legs", cn: "短腿" },
+    { en: "big ears", cn: "大耳朵" },
+    { en: "every day", cn: "每天" },
+    { en: "have fun", cn: "玩得开心" },
+    { en: "a long tail", cn: "一条长尾巴" },
+    { en: "a long body", cn: "一个长身体" },
+    { en: "draw a picture", cn: "画一幅画" },
+    { en: "sing and dance", cn: "唱歌跳舞" },
+    // 第三单元
+    { en: "my nose", cn: "我的鼻子" },
+    { en: "in class", cn: "在课堂上" },
+    { en: "no problem", cn: "没问题" },
+    { en: "draw a line", cn: "画一条线" },
+    { en: "put... in...", cn: "把……放到……里" },
+    { en: "my tongue", cn: "我的舌头" },
+    { en: "school things", cn: "学习用品" },
+    { en: "my senses", cn: "我的感觉官能" },
+    { en: "your pencil box", cn: "你的铅笔盒" },
+    { en: "make a kite", cn: "制作一个风筝" },
+    { en: "Excuse me", cn: "我的感觉官能" },
+    { en: "Here you are", cn: "你的铅笔盒" },
+    { en: "make a kite", cn: "制作一个风筝" }];
+</script>
+</body>
+</html>

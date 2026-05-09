@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>三年级英语词汇泡泡消消乐</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+body {
+  background: #fff5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+.bubble {
+  transition: all 0.25s ease;
+  position: relative;
+  min-height: 45px;
+}
+.bubble:active {
+  transform: scale(0.92);
+}
+.bubble.selected {
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(255,153,0,0.6);
+}
+.vanish {
+  animation: vanish 0.6s ease forwards;
+}
+@keyframes vanish {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-5 px-4">
+<div class="w-full max-w-[380px] flex justify-between items-center mb-4 text-lg font-bold">
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">分数：<span id="score">0</span></div>
+  <div class="bg-orange-400 text-white px-4 py-2 rounded-full shadow">时间：<span id="timer">00:00</span></div>
+</div>
+
+<div id="container" class="w-full max-w-[380px] grid grid-cols-2 gap-3 mb-6"></div>
+
+<button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
+  继续游戏
+</button>
+<script src="phrase.js"></script>
+<script>
+  
+const wordList = [
+    // 第四单元
+    { en: "at home", cn: "在家" },
+    { en: "drink milk", cn: "喝牛奶" },
+    { en: "some milk", cn: "一些牛奶" },
+    { en: "junk food", cn: "垃圾食品" },
+    { en: "some bread", cn: "一些面包" },
+    { en: "share the cake", cn: "分享蛋糕" },
+    { en: "healthy food", cn: "健康的食物" },
+    { en: "healthy plate", cn: "健康餐盘" },
+    { en: "too much", cn: "太多" },
+    { en: "every day", cn: "每天" },
+    { en: "be good for...", cn: "对……有好处" },
+    // 第五单元
+    { en: "old books", cn: "旧书" },
+    { en: "school things", cn: "学习用品" },
+    { en: "in the bag", cn: "在包里" },
+    { en: "on the wall", cn: "在墙上" },
+    { en: "on the shelf", cn: "在架子上" },
+    { en: "so many", cn: "如此多;这么多" },
+    { en: "old toys", cn: "旧玩具" },
+    { en: "a toy boat", cn: "一只玩具小船" },
+    { en: "in the box", cn: "在箱子里" },
+    { en: "on the ground", cn: "在地上" },
+    { en: "under the box", cn: "在箱子下面" },
+    { en: "all around", cn: "周围;四周" },
+    // 第六单元
+    { en: "how many", cn: "多少(询问可数名词数量)" },
+    { en: "make decisions", cn: "做决定" },
+    { en: "how much", cn: "多少(询问不可数名词数量，或询问价格)" },
+    { en: "pay... for...", cn: "为……支付……" },
+    { en: "do with", cn: "处理" },
+    { en: "watch the clock", cn: "看钟表" },
+    { en: "put ... back ...", cn: "把……放回……" }
+];
+</script>
+</body>
+</html>

@@ -50,6 +50,7 @@ body {
 <button id="restart" class="bg-orange-400 hover:bg-orange-500 text-white font-bold text-lg px-6 py-3 rounded-full shadow-lg hidden">
   继续游戏
 </button>
+<script src="word.js"></script>
 <script>
   
 const wordList = [
@@ -106,116 +107,134 @@ const wordList = [
 { en: "animal", cn: "动物" },
 { en: "giraffe", cn: "长颈鹿" },
 { en: "tall", cn: "高的" },
-{ en: "fast", cn: "快的" }];
+{ en: "fast", cn: "快的" },
+{ en: "wave", cn: "挥手" },
+{ en: "circle", cn: "圈一圈" },
+{ en: "chant", cn: "唱一唱" },
+{ en: "your", cn: "你的" },
+{ en: "now", cn: "现在" },
+{ en: "tick", cn: "打勾" },
+{ en: "sleep", cn: "睡觉" },
+{ en: "hop", cn: "跳跃" },
+{ en: "swim", cn: "游泳" },
+{ en: "run", cn: "跑" },
+{ en: "group", cn: "分组，群组" },
+{ en: "children", cn: "孩子们" },
+{ en: "whale shark", cn: "鲸鲨" },
+{ en: "squid", cn: "鱿鱼" },
+{ en: "sea lion", cn: "海狮" },
+{ en: "special", cn: "特别的" },
+{ en: "amazing", cn: "神奇的" }];
 
-let usedWords = [];
-let currentWords = [];
-let score = 0;
-let selected = null;
-let locked = false;
-let time = 0;
-let timer;
-let timerRunning = false;
+// let usedWords = [];
+// let currentWords = [];
+// let score = 0;
+// let selected = null;
+// let locked = false;
+// let time = 0;
+// let timer;
+// let timerRunning = false;
 
-function formatTime(s) {
-  const m = String(Math.floor(s / 60)).padStart(2, '0');
-  const sec = String(s % 60).padStart(2, '0');
-  return m + ":" + sec;
-}
+// function formatTime(s) {
+//   const m = String(Math.floor(s / 60)).padStart(2, '0');
+//   const sec = String(s % 60).padStart(2, '0');
+//   return m + ":" + sec;
+// }
 
-function speak(text, lang) {
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = lang;
-  utter.rate = 0.9;
-  speechSynthesis.speak(utter);
-}
+// function speak(text, lang) {
+//   const utter = new SpeechSynthesisUtterance(text);
+//   utter.lang = lang;
+//   utter.rate = 0.9;
+//   speechSynthesis.speak(utter);
+// }
 
-function getTenWords() {
-  const pool = wordList.filter(w => !usedWords.includes(w.en));
-  if (pool.length === 0) {
-    alert("🎉 恭喜你！已完成全部单词练习！");
-    return null;
-  }
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  const ten = shuffled.slice(0, 10);
-  usedWords.push(...ten.map(w => w.en));
-  return ten;
-}
+// function getTenWords() {
+//   const pool = wordList.filter(w => !usedWords.includes(w.en));
+//   if (pool.length === 0) {
+//     alert("🎉 恭喜你！已完成全部单词练习！");
+//     return null;
+//   }
+//   const shuffled = [...pool].sort(() => Math.random() - 0.5);
+//   const ten = shuffled.slice(0, 10);
+//   usedWords.push(...ten.map(w => w.en));
+//   return ten;
+// }
 
-function render() {
-  const container = document.getElementById("container");
-  container.innerHTML = "";
-  selected = null;
-  locked = false;
+// function render() {
+//   const container = document.getElementById("container");
+//   container.innerHTML = "";
+//   selected = null;
+//   locked = false;
 
-  const ens = currentWords.map(w => ({ type: "en", text: w.en, match: w.cn }));
-  const cns = currentWords.map(w => ({ type: "cn", text: w.cn, match: w.en }));
-  const all = [...ens, ...cns].sort(() => Math.random() - 0.5);
+//   const ens = currentWords.map(w => ({ type: "en", text: w.en, match: w.cn }));
+//   const cns = currentWords.map(w => ({ type: "cn", text: w.cn, match: w.en }));
+//   const all = [...ens, ...cns].sort(() => Math.random() - 0.5);
 
-  all.forEach(item => {
-    const bubble = document.createElement("div");
-    bubble.className = "bubble flex items-center justify-center rounded-full font-bold shadow-md aspect-square " +
-      (item.type === "en" ? "bg-pink-300 text-lg" : "bg-green-300 text-base");
-    bubble.textContent = item.text;
+//   all.forEach(item => {
+//     const bubble = document.createElement("div");
+//     bubble.className = "bubble flex items-center justify-center rounded-full font-bold shadow-md aspect-square " +
+//       (item.type === "en" ? "bg-pink-300 text-lg" : "bg-green-300 text-base");
+//     bubble.textContent = item.text;
 
-    bubble.addEventListener("click", () => {
-      if (locked || bubble.classList.contains("vanish")) return;
-      if (bubble === selected?.bubble) return;
+//     bubble.addEventListener("click", () => {
+//       if (locked || bubble.classList.contains("vanish")) return;
+//       if (bubble === selected?.bubble) return;
 
-      item.type === "en" ? speak(item.text, "en-US") : speak(item.text, "zh-CN");
+//       item.type === "en" ? speak(item.text, "en-US") : speak(item.text, "zh-CN");
 
-      if (!selected) {
-        selected = { bubble, matchText: item.match };
-        bubble.classList.add("selected");
-        return;
-      }
+//       if (!selected) {
+//         selected = { bubble, matchText: item.match };
+//         bubble.classList.add("selected");
+//         return;
+//       }
 
-      locked = true;
-      if (selected.matchText === item.text && item.match === selected.bubble.textContent) {
-        selected.bubble.classList.add("vanish");
-        bubble.classList.add("vanish");
-        score += 10;
-        document.getElementById("score").textContent = score;
-        setTimeout(() => {
-          selected = null;
-          locked = false;
-          checkFinish();
-        }, 600);
-      } else {
-        setTimeout(() => {
-          selected.bubble.classList.remove("selected");
-          selected = null;
-          locked = false;
-        }, 400);
-      }
-    });
-    container.appendChild(bubble);
-  });
-}
+//       locked = true;
+//       if (selected.matchText === item.text && item.match === selected.bubble.textContent) {
+//         selected.bubble.classList.add("vanish");
+//         bubble.classList.add("vanish");
+//         score += 10;
+//         document.getElementById("score").textContent = score;
+//         setTimeout(() => {
+//           selected = null;
+//           locked = false;
+//           checkFinish();
+//         }, 600);
+//       } else {
+//         setTimeout(() => {
+//           selected.bubble.classList.remove("selected");
+//           selected = null;
+//           locked = false;
+//         }, 400);
+//       }
+//     });
+//     container.appendChild(bubble);
+//   });
+// }
 
-function checkFinish() {
-  if (document.querySelectorAll(".vanish").length === 20) {
-    clearInterval(timer);
-    document.getElementById("restart").classList.remove("hidden");
-  }
-}
+// function checkFinish() {
+//   if (document.querySelectorAll(".vanish").length === 20) {
+//     clearInterval(timer);
+//     document.getElementById("restart").classList.remove("hidden");
+//   }
+// }
 
-function start() {
-  currentWords = getTenWords();
-  if (!currentWords) return;
-  render();
-  document.getElementById("restart").classList.add("hidden");
-  if (!timerRunning) {
-    timerRunning = true;
-    timer = setInterval(() => {
-      time++;
-      document.getElementById("timer").textContent = formatTime(time);
-    }, 1000);
-  }
-}
+// function start() {
+//   currentWords = getTenWords();
+//   if (!currentWords) return;
+//   render();
+//   document.getElementById("restart").classList.add("hidden");
+//   if (!timerRunning) {
+//     timerRunning = true;
+//     timer = setInterval(() => {
+//       time++;
+//       document.getElementById("timer").textContent = formatTime(time);
+//     }, 1000);
+//   }
+// }
 
-document.getElementById("restart").onclick = start;
-window.onload = start;
+// document.getElementById("restart").onclick = start;
+// window.onload = start;
 </script>
+
 </body>
 </html>
