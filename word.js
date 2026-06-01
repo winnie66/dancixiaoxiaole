@@ -87,6 +87,9 @@ function checkFinish() {
   if (document.querySelectorAll(".vanish").length === 20) {
     clearInterval(timer);
     document.getElementById("restart").classList.remove("hidden");
+    const utter = new SpeechSynthesisUtterance('红豆太棒啦');
+    utter.lang = "zh-CN";
+    speechSynthesis.speak(utter);
   }
 }
 

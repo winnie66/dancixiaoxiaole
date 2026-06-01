@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三年级PEP英语拼句PK游戏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#3478f6;min-height:100vh;padding:30px 15px;color:#fff}
+.wrap{max-width:520px;margin:0 auto}
+.title-top{text-align:center;font-size:20px;margin-bottom:30px}
+.question-box{background:#fff;color:#222;border-radius:16px;padding:20px;text-align:center;margin-bottom:30px}
+.chs{font-size:19px;margin-bottom:8px}
+.put-area{min-height:55px;border-bottom:2px dashed #fff;margin-bottom:35px;display:flex;gap:8px;justify-content:center;align-items:center}
+.put-word{background:#fff;color:#3478f6;padding:7px 14px;border-radius:6px;font-size:17px}
+.opt-box{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.opt-btn{background:#fff;color:#333;border:none;border-radius:8px;padding:10px 16px;font-size:17px}
+.ctrl-box{display:flex;gap:12px;justify-content:center;margin-top:35px}
+#next,#reset{padding:11px 22px;border:none;border-radius:9px;font-size:16px}
+#next{background:#ffc82e;color:#222}
+#reset{background:#eeeeee;color:#333}
+.tip{text-align:center;margin-top:16px;font-size:16px;height:22px}
+.right{color:#9cfc79}
+.wrong{color:#ff7d7d}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="title-top">人教版PEP三年级上册｜单词拼句子</div>
+    <div class="question-box">
+        <div class="chs" id="zhText"></div>
+    </div>
+    <div class="put-area" id="fillBox"></div>
+    <div class="opt-box" id="optionBox"></div>
+    <div class="ctrl-box">
+        <button id="next">下一题</button>
+        <button id="reset">清空本题</button>
+    </div>
+    <div class="tip" id="tipText"></div>
+</div>
+
+<script>
+// 全量题库：原有内容 + 本次新增期末短语+Appendix4课本句型
+const questionList = [
+    //三下短语
+    {cn:"两个新朋友",ans:"two new friends",words:["two","new","friends"]},
+    {cn:"欢迎到……",ans:"welcome to",words:["welcome","to"]},
+    {cn:"你的名字",ans:"your name",words:["your","name"]},
+    {cn:"我的同班同学",ans:"my classmate",words:["my","classmate"]},
+    {cn:"玩游戏",ans:"play a game",words:["play","a","game"]},
+    {cn:"出去",ans:"go out",words:["go","out"]},
+    {cn:"我的英语老师",ans:"my English teacher",words:["my","English","teacher"]},
+    {cn:"一个长身体",ans:"a long body",words:["a","long","body"]},
+    {cn:"短腿",ans:"short legs",words:["short","legs"]},
+    {cn:"一条长尾巴",ans:"a long tail",words:["a","long","tail"]},
+    {cn:"大耳朵",ans:"big ears",words:["big","ears"]},
+    {cn:"唱歌跳舞",ans:"sing and dance",words:["sing","and","dance"]},
+    {cn:"画一幅画",ans:"draw a picture",words:["draw","a","picture"]},
+    {cn:"我的舌头",ans:"my tongue",words:["my","tongue"]},
+    {cn:"我的鼻子",ans:"my nose",words:["my","nose"]},
+    {cn:"制作一个风筝",ans:"make a kite",words:["make","a","kite"]},
+    {cn:"你的铅笔盒",ans:"your pencil box",words:["your","pencil","box"]},
+    {cn:"在箱子里",ans:"in the box",words:["in","the","box"]},
+    {cn:"在墙上",ans:"on the wall",words:["on","the","wall"]},
+    {cn:"一只玩具小船",ans:"a toy boat",words:["a","toy","boat"]},
+    {cn:"在箱子下面",ans:"under the box",words:["under","the","box"]},
+    {cn:"玩具汽车",ans:"toy car",words:["toy","car"]},
+    {cn:"喝牛奶",ans:"drink milk",words:["drink","milk"]},
+    {cn:"一些面包",ans:"some bread",words:["some","bread"]},
+    {cn:"垃圾食品",ans:"junk food",words:["junk","food"]},
+    {cn:"健康的食物",ans:"healthy food",words:["healthy","food"]},
+    {cn:"分享蛋糕",ans:"share the cake",words:["share","the","cake"]},
+    {cn:"每天",ans:"every day",words:["every","day"]},
+    {cn:"在课堂上",ans:"in class",words:["in","class"]},
+    {cn:"没问题",ans:"no problem",words:["no","problem"]},
+    {cn:"把……放到里面",ans:"put in",words:["put","in"]},
+    {cn:"旧书",ans:"old books",words:["old","books"]},
+    {cn:"旧玩具",ans:"old toys",words:["old","toys"]},
+    {cn:"对……有好处",ans:"be good for",words:["be","good","for"]},
+    {cn:"在四周",ans:"all around",words:["all","around"]},
+    {cn:"如此多",ans:"so many",words:["so","many"]},
+    {cn:"多少（数量）",ans:"how many",words:["how","many"]},
+    {cn:"多少钱",ans:"how much",words:["how","much"]},
+    {cn:"在架子上",ans:"on the shelf",words:["on","the","shelf"]},
+    {cn:"在地上",ans:"on the ground",words:["on","the","ground"]},
+    {cn:"在书包里",ans:"in the bag",words:["in","the","bag"]},
+    {cn:"你好，我是迈克。",ans:"Hello I'm Mike",words:["Hello","I'm","Mike"]},
+    {cn:"你叫什么名字？",ans:"What's your name",words:["What's","your","name"]},
+    {cn:"再见，怀特小姐。",ans:"Goodbye Miss White",words:["Goodbye","Miss","White"]},
+    {cn:"很高兴见到你。",ans:"Nice to meet you",words:["Nice","to","meet","you"]},
+    {cn:"把它涂成棕色！",ans:"Colour it brown",words:["Colour","it","brown"]},
+    {cn:"我看见红色。",ans:"I see red",words:["I","see","red"]},
+    {cn:"黑色和白色。",ans:"Black and white",words:["Black","and","white"]},
+    {cn:"让我们画画吧。",ans:"Let's draw",words:["Let's","draw"]},
+    {cn:"看我！",ans:"Look at me",words:["Look","at","me"]},
+    {cn:"摸摸你的耳朵。",ans:"Touch your ear",words:["Touch","your","ear"]},
+    {cn:"张开你的嘴巴。",ans:"Open your mouth",words:["Open","your","mouth"]},
+    {cn:"闭上你的眼睛。",ans:"Close your eyes",words:["Close","your","eyes"]},
+    {cn:"它是一只鸭子。",ans:"It's a duck",words:["It's","a","duck"]},
+    {cn:"那是一只熊猫。",ans:"That's a panda",words:["That's","a","panda"]},
+    {cn:"我喜欢小狗。",ans:"I like dogs",words:["I","like","dogs"]},
+    {cn:"看那只猴子。",ans:"Look at the monkey",words:["Look","at","the","monkey"]},
+    {cn:"我想要果汁。",ans:"I'd like juice",words:["I'd","like","juice"]},
+    {cn:"吃点鸡蛋吧。",ans:"Have some eggs",words:["Have","some","eggs"]},
+    {cn:"喝点水。",ans:"Drink some water",words:["Drink","some","water"]},
+    {cn:"谢谢你。",ans:"Thank you",words:["Thank","you"]},
+    {cn:"我六岁了。",ans:"I'm six years old",words:["I'm","six","years","old"]},
+    {cn:"有多少支钢笔？",ans:"How many pens",words:["How","many","pens"]},
+    {cn:"生日快乐！",ans:"Happy birthday",words:["Happy","birthday"]},
+    {cn:"我看到九只小鸟。",ans:"I see nine birds",words:["I","see","nine","birds"]},
+    //三下句子
+    //Unit1 Appendix4
+    {cn:"你叫什么名字？",ans:"What's your name",words:["What's","your","name"]},
+    {cn:"我叫埃米·格林。",ans:"My name's Amy Green",words:["My","name's","Amy","Green"]},
+    {cn:"你是哪里人？",ans:"Where are you from",words:["Where","are","you","from"]},
+    {cn:"我是英国人。",ans:"I'm from the UK",words:["I'm","from","the","UK"]},
+    {cn:"我来帮忙。",ans:"Let me help",words:["Let","me","help"]},
+    {cn:"您先请！",ans:"After you",words:["After","you"]},
+    {cn:"别客气。",ans:"You're welcome",words:["You're","welcome"]},
+    {cn:"那个女孩是谁？",ans:"Who's that girl",words:["Who's","that","girl"]},
+    {cn:"是我们的新邻居埃米。",ans:"That's our new neighbour Amy",words:["That's","our","new","neighbour","Amy"]},
+    {cn:"你经常对妈妈那么说吗？",ans:"Do you often say that to your mum",words:["Do","you","often","say","that","to","your","mum"]},
+    {cn:"是的。",ans:"Yes I do",words:["Yes","I","do"]},
+    {cn:"我经常给她做礼物。",ans:"I often make her gifts",words:["I","often","make","her","gifts"]},
+    {cn:"我们用很多种方式表达自己。",ans:"We express ourselves in many ways",words:["We","express","ourselves","in","many","ways"]},
+    //Unit2 Appendix4
+    {cn:"它有长长的身体和短短的腿。",ans:"It has a long body and short legs",words:["It","has","a","long","body","and","short","legs"]},
+    {cn:"狗是友善的。",ans:"Dogs are friendly",words:["Dogs","are","friendly"]},
+    //Unit3 Appendix4
+    {cn:"劳驾。",ans:"Excuse me",words:["Excuse","me"]},
+    {cn:"我能用一下你的橡皮吗？",ans:"Can I use your eraser please",words:["Can","I","use","your","eraser","please"]},
+    {cn:"当然。给你。",ans:"Sure Here you are",words:["Sure","Here","you","are"]},
+    {cn:"没问题。",ans:"No problem",words:["No","problem"]},
+    {cn:"这些是什么？",ans:"What are these",words:["What","are","these"]},
+    {cn:"是葡萄。",ans:"They're grapes",words:["They're","grapes"]},
+    {cn:"这个呢？",ans:"What about this",words:["What","about","this"]},
+    //Unit4 Appendix4
+    {cn:"我想吃点儿面包和鸡蛋。",ans:"I'd like some bread and eggs please",words:["I'd","like","some","bread","and","eggs","please"]},
+    {cn:"也喝点儿牛奶吧。",ans:"Have some milk too",words:["Have","some","milk","too"]},
+    {cn:"要吃点儿米饭和肉吗？",ans:"Would you like some rice and meat",words:["Would","you","like","some","rice","and","meat"]},
+    {cn:"好的，谢谢。",ans:"Yes please",words:["Yes","please"]},
+    {cn:"每天吃一些吧！",ans:"Eat some every day",words:["Eat","some","every","day"]},
+    //Unit5 Appendix4
+    {cn:"你有旧东西吗？",ans:"Do you have old things",words:["Do","you","have","old","things"]},
+    {cn:"是的，我有些旧书。",ans:"Yes I do I have some old books",words:["Yes","I","do","I","have","some","old","books"]},
+    {cn:"这只船很酷。",ans:"This boat is cool",words:["This","boat","is","cool"]},
+    {cn:"你可以留着它。",ans:"You can keep it",words:["You","can","keep","it"]},
+    {cn:"妈妈，我的动物书在哪儿？",ans:"Mum where is my animal book",words:["Mum","where","is","my","animal","book"]},
+    {cn:"在架子上吗？",ans:"Is it on the shelf",words:["Is","it","on","the","shelf"]},
+    {cn:"不，不在。",ans:"No it isn't",words:["No","it","isn't"]},
+    {cn:"它在盒子里。",ans:"It's in the box",words:["It's","in","the","box"]},
+    //Unit6 Appendix4
+    {cn:"我们有多少本书？",ans:"How many books do we have",words:["How","many","books","do","we","have"]},
+    {cn:"我们有十五本书。",ans:"We have fifteen books",words:["We","have","fifteen","books"]},
+    {cn:"我们需要多少个箱子？",ans:"How many boxes do we need",words:["How","many","boxes","do","we","need"]},
+    {cn:"我们需要三个箱子。",ans:"We need three boxes",words:["We","need","three","boxes"]},
+    {cn:"这个包多少钱？",ans:"How much is this bag",words:["How","much","is","this","bag"]},
+    {cn:"二十元。",ans:"It's twenty yuan",words:["It's","twenty","yuan"]},
+    {cn:"六元，或者十七元三本。",ans:"Six yuan or three for seventeen yuan",words:["Six","yuan","or","three","for","seventeen","yuan"]},
+    {cn:"十六元三本行吗？",ans:"How about three for sixteen yuan",words:["How","about","three","for","sixteen","yuan"]}
+];
+
+let nowIdx = 0;
+let selectedArr = [];
+
+const zhDom = document.getElementById("zhText");
+const fillDom = document.getElementById("fillBox");
+const optDom = document.getElementById("optionBox");
+const tipDom = document.getElementById("tipText");
+const nextBtn = document.getElementById("next");
+const resetBtn = document.getElementById("reset");
+
+function render(){
+    tipDom.textContent = "";
+    selectedArr = [];
+    const item = questionList[nowIdx];
+    zhDom.innerText = item.cn;
+    fillDom.innerHTML = "";
+    optDom.innerHTML = "";
+    let randomWords = [...item.words].sort(()=>Math.random()-0.5);
+    randomWords.forEach(word=>{
+        let btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.innerText = word;
+        btn.onclick = ()=>addWord(word,btn);
+        optDom.appendChild(btn);
+    })
+}
+
+function addWord(word,btn){
+    selectedArr.push(word);
+    let span = document.createElement("span");
+    span.className = "put-word";
+    span.innerText = word;
+    fillDom.appendChild(span);
+    btn.disabled = true;
+    btn.style.opacity="0.3";
+
+    const rightStr = questionList[nowIdx].ans;
+    const userStr = selectedArr.join(" ");
+    if(selectedArr.length === questionList[nowIdx].words.length){
+        if(userStr === rightStr){
+            tipDom.className="tip right";
+            tipDom.innerText="✅ 拼句正确！";
+            const utter = new SpeechSynthesisUtterance('太棒啦');
+            utter.lang = "zh-CN";
+            speechSynthesis.speak(utter);
+        }else{
+            tipDom.className="tip wrong";
+            tipDom.innerText=`❌ 错误，正确：${rightStr}`;
+        }
+    }
+}
+
+nextBtn.onclick = ()=>{
+    nowIdx++;
+    if(nowIdx >= questionList.length){
+        tipDom.innerText="🎉恭喜全部闯关完成！";
+        return;
+    }
+    render();
+}
+resetBtn.onclick = render;
+
+render();
+</script>
+</body>
+</html>
