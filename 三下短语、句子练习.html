@@ -8,7 +8,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#3478f6;min-height:100vh;padding:30px 15px;color:#fff}
 .wrap{max-width:520px;margin:0 auto}
-.title-top{text-align:center;font-size:20px;margin-bottom:30px}
+.title-top{text-align:center;font-size:20px;margin-bottom:10px}
 .question-box{background:#fff;color:#222;border-radius:16px;padding:20px;text-align:center;margin-bottom:30px}
 .chs{font-size:19px;margin-bottom:8px}
 .put-area{min-height:55px;border-bottom:2px dashed #fff;margin-bottom:35px;display:flex;gap:8px;justify-content:center;align-items:center}
@@ -16,17 +16,23 @@ body{background:#3478f6;min-height:100vh;padding:30px 15px;color:#fff}
 .opt-box{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .opt-btn{background:#fff;color:#333;border:none;border-radius:8px;padding:10px 16px;font-size:17px}
 .ctrl-box{display:flex;gap:12px;justify-content:center;margin-top:35px}
-#next,#reset{padding:11px 22px;border:none;border-radius:9px;font-size:16px}
-#next{background:#ffc82e;color:#222}
-#reset{background:#eeeeee;color:#333}
+#next,#reset,.current,.reset{padding:11px 22px;border:none;border-radius:9px;font-size:16px}
+#next,.current{background:#ffc82e;color:#222}
+#reset,.reset{background:#eeeeee;color:#333}
 .tip{text-align:center;margin-top:16px;font-size:16px;height:22px}
 .right{color:#9cfc79}
 .wrong{color:#ff7d7d}
+.box{display:flex;gap:12px;justify-content:center;margin-bottom:10px}
 </style>
 </head>
 <body>
 <div class="wrap">
-    <div class="title-top">人教版PEP三年级上册｜单词拼句子</div>
+    <div class="title-top">单词拼句子</div>
+    <div class="box">
+        <button onclick="jump('三上短语、句子练习.html')" class="reset">三上</button>
+        <button onclick="jump('三下短语、句子练习.html')" class="current">三下</button>
+                <button onclick="jump('main.html')" class="reset">返回单词练习</button>
+    </div>
     <div class="question-box">
         <div class="chs" id="zhText"></div>
     </div>
@@ -84,30 +90,6 @@ const questionList = [
     {cn:"在架子上",ans:"on the shelf",words:["on","the","shelf"]},
     {cn:"在地上",ans:"on the ground",words:["on","the","ground"]},
     {cn:"在书包里",ans:"in the bag",words:["in","the","bag"]},
-    {cn:"你好，我是迈克。",ans:"Hello I'm Mike",words:["Hello","I'm","Mike"]},
-    {cn:"你叫什么名字？",ans:"What's your name",words:["What's","your","name"]},
-    {cn:"再见，怀特小姐。",ans:"Goodbye Miss White",words:["Goodbye","Miss","White"]},
-    {cn:"很高兴见到你。",ans:"Nice to meet you",words:["Nice","to","meet","you"]},
-    {cn:"把它涂成棕色！",ans:"Colour it brown",words:["Colour","it","brown"]},
-    {cn:"我看见红色。",ans:"I see red",words:["I","see","red"]},
-    {cn:"黑色和白色。",ans:"Black and white",words:["Black","and","white"]},
-    {cn:"让我们画画吧。",ans:"Let's draw",words:["Let's","draw"]},
-    {cn:"看我！",ans:"Look at me",words:["Look","at","me"]},
-    {cn:"摸摸你的耳朵。",ans:"Touch your ear",words:["Touch","your","ear"]},
-    {cn:"张开你的嘴巴。",ans:"Open your mouth",words:["Open","your","mouth"]},
-    {cn:"闭上你的眼睛。",ans:"Close your eyes",words:["Close","your","eyes"]},
-    {cn:"它是一只鸭子。",ans:"It's a duck",words:["It's","a","duck"]},
-    {cn:"那是一只熊猫。",ans:"That's a panda",words:["That's","a","panda"]},
-    {cn:"我喜欢小狗。",ans:"I like dogs",words:["I","like","dogs"]},
-    {cn:"看那只猴子。",ans:"Look at the monkey",words:["Look","at","the","monkey"]},
-    {cn:"我想要果汁。",ans:"I'd like juice",words:["I'd","like","juice"]},
-    {cn:"吃点鸡蛋吧。",ans:"Have some eggs",words:["Have","some","eggs"]},
-    {cn:"喝点水。",ans:"Drink some water",words:["Drink","some","water"]},
-    {cn:"谢谢你。",ans:"Thank you",words:["Thank","you"]},
-    {cn:"我六岁了。",ans:"I'm six years old",words:["I'm","six","years","old"]},
-    {cn:"有多少支钢笔？",ans:"How many pens",words:["How","many","pens"]},
-    {cn:"生日快乐！",ans:"Happy birthday",words:["Happy","birthday"]},
-    {cn:"我看到九只小鸟。",ans:"I see nine birds",words:["I","see","nine","birds"]},
     //三下句子
     //Unit1 Appendix4
     {cn:"你叫什么名字？",ans:"What's your name",words:["What's","your","name"]},
@@ -169,6 +151,11 @@ const optDom = document.getElementById("optionBox");
 const tipDom = document.getElementById("tipText");
 const nextBtn = document.getElementById("next");
 const resetBtn = document.getElementById("reset");
+
+function jump(url){
+    window.location.href = url;
+        }
+
 
 function render(){
     tipDom.textContent = "";
