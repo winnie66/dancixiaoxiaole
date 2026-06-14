@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三年级PEP英语拼句PK游戏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#3478f6;min-height:100vh;padding:30px 15px;color:#fff}
+.wrap{max-width:520px;margin:0 auto}
+.title-top{text-align:center;font-size:20px;margin-bottom:10px}
+.question-box{background:#fff;color:#222;border-radius:16px;padding:20px;text-align:center;margin-bottom:30px}
+.chs{font-size:19px;margin-bottom:8px}
+.put-area{min-height:55px;border-bottom:2px dashed #fff;margin-bottom:35px;display:flex;gap:8px;justify-content:center;align-items:center}
+.put-word{background:#fff;color:#3478f6;padding:7px 14px;border-radius:6px;font-size:17px}
+.opt-box{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.opt-btn{background:#fff;color:#333;border:none;border-radius:8px;padding:10px 16px;font-size:17px;margin-right: 10px}
+.ctrl-box{display:flex;gap:12px;justify-content:center;margin-top:35px}
+#next,#reset,.current,.reset{padding:11px 22px;border:none;border-radius:9px;font-size:16px}
+#next,.current{background:#ffc82e;color:#222}
+#reset,.reset{background:#eeeeee;color:#333}
+.tip{text-align:center;margin-top:16px;font-size:16px;height:22px}
+.right{color:#9cfc79}
+.wrong{color:#ff7d7d}
+.box{display:flex;gap:12px;justify-content:center;margin-bottom:10px}
+.box button,.ctrl-box button{
+    margin-right: 10px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="title-top">单词拼句子</div>
+    <div class="box">
+        <button onclick="jump('三上短语练习.html')" class="reset">三上短语</button>
+        <button onclick="jump('三上句子练习.html')" class="reset">三上句子</button>
+        <button onclick="jump('三下短语练习.html')" class="current">三下短语</button>
+        <button onclick="jump('三下句子练习.html')" class="reset">三下句子</button>
+        <button onclick="jump('main.html')" class="reset">返回单词练习</button>
+    </div>
+    <div class="question-box">
+        <div class="chs" id="zhText"></div>
+    </div>
+    <div class="put-area" id="fillBox"></div>
+    <div class="opt-box" id="optionBox"></div>
+    <div class="ctrl-box">
+        <button id="next">下一题</button>
+        <button id="reset">清空本题</button>
+    </div>
+    <div class="tip" id="tipText"></div>
+</div>
+
+<script>
+// 全量题库：原有内容 + 本次新增期末短语+Appendix4课本句型
+const questionList = [
+    //三下短语
+    {cn:"两个新朋友",ans:"two new friends",words:["two","new","friends"]},
+    {cn:"欢迎到……",ans:"welcome to",words:["welcome","to"]},
+    {cn:"你的名字",ans:"your name",words:["your","name"]},
+    {cn:"我的同班同学",ans:"my classmate",words:["my","classmate"]},
+    {cn:"玩游戏",ans:"play a game",words:["play","a","game"]},
+    {cn:"出去",ans:"go out",words:["go","out"]},
+    {cn:"我的英语老师",ans:"my English teacher",words:["my","English","teacher"]},
+    {cn:"一个长身体",ans:"a long body",words:["a","long","body"]},
+    {cn:"短腿",ans:"short legs",words:["short","legs"]},
+    {cn:"一条长尾巴",ans:"a long tail",words:["a","long","tail"]},
+    {cn:"大耳朵",ans:"big ears",words:["big","ears"]},
+    {cn:"唱歌跳舞",ans:"sing and dance",words:["sing","and","dance"]},
+    {cn:"画一幅画",ans:"draw a picture",words:["draw","a","picture"]},
+    {cn:"我的舌头",ans:"my tongue",words:["my","tongue"]},
+    {cn:"我的鼻子",ans:"my nose",words:["my","nose"]},
+    {cn:"制作一个风筝",ans:"make a kite",words:["make","a","kite"]},
+    {cn:"你的铅笔盒",ans:"your pencil box",words:["your","pencil","box"]},
+    {cn:"在箱子里",ans:"in the box",words:["in","the","box"]},
+    {cn:"在墙上",ans:"on the wall",words:["on","the","wall"]},
+    {cn:"一只玩具小船",ans:"a toy boat",words:["a","toy","boat"]},
+    {cn:"在箱子下面",ans:"under the box",words:["under","the","box"]},
+    {cn:"玩具汽车",ans:"toy car",words:["toy","car"]},
+    {cn:"喝牛奶",ans:"drink milk",words:["drink","milk"]},
+    {cn:"一些面包",ans:"some bread",words:["some","bread"]},
+    {cn:"垃圾食品",ans:"junk food",words:["junk","food"]},
+    {cn:"健康的食物",ans:"healthy food",words:["healthy","food"]},
+    {cn:"分享蛋糕",ans:"share the cake",words:["share","the","cake"]},
+    {cn:"每天",ans:"every day",words:["every","day"]},
+    {cn:"在课堂上",ans:"in class",words:["in","class"]},
+    {cn:"没问题",ans:"no problem",words:["no","problem"]},
+    {cn:"把……放到里面",ans:"put in",words:["put","in"]},
+    {cn:"旧书",ans:"old books",words:["old","books"]},
+    {cn:"旧玩具",ans:"old toys",words:["old","toys"]},
+    {cn:"对……有好处",ans:"be good for",words:["be","good","for"]},
+    {cn:"在四周",ans:"all around",words:["all","around"]},
+    {cn:"如此多",ans:"so many",words:["so","many"]},
+    {cn:"多少（数量）",ans:"how many",words:["how","many"]},
+    {cn:"多少钱",ans:"how much",words:["how","much"]},
+    {cn:"在架子上",ans:"on the shelf",words:["on","the","shelf"]},
+    {cn:"在地上",ans:"on the ground",words:["on","the","ground"]},
+    {cn:"在书包里",ans:"in the bag",words:["in","the","bag"]},
+];
+
+let nowIdx = 0;
+let selectedArr = [];
+
+const zhDom = document.getElementById("zhText");
+const fillDom = document.getElementById("fillBox");
+const optDom = document.getElementById("optionBox");
+const tipDom = document.getElementById("tipText");
+const nextBtn = document.getElementById("next");
+const resetBtn = document.getElementById("reset");
+
+function jump(url){
+    window.location.href = url;
+        }
+
+
+function render(){
+    tipDom.textContent = "";
+    selectedArr = [];
+    const item = questionList[nowIdx];
+    zhDom.innerText = item.cn;
+    fillDom.innerHTML = "";
+    optDom.innerHTML = "";
+    let randomWords = [...item.words].sort(()=>Math.random()-0.5);
+    randomWords.forEach(word=>{
+        let btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.innerText = word;
+        btn.onclick = ()=>addWord(word,btn);
+        optDom.appendChild(btn);
+    })
+}
+
+function addWord(word,btn){
+    selectedArr.push(word);
+    let span = document.createElement("span");
+    span.className = "put-word";
+    span.innerText = word;
+    fillDom.appendChild(span);
+    btn.disabled = true;
+    btn.style.opacity="0.3";
+
+    const rightStr = questionList[nowIdx].ans;
+    const userStr = selectedArr.join(" ");
+    if(selectedArr.length === questionList[nowIdx].words.length){
+        if(userStr === rightStr){
+            tipDom.className="tip right";
+            tipDom.innerText="✅ 拼句正确！";
+            const utter = new SpeechSynthesisUtterance('红豆真棒');
+            utter.lang = "zh-CN";
+            speechSynthesis.speak(utter);
+        }else{
+            tipDom.className="tip wrong";
+            tipDom.innerText=`❌ 错误，正确：${rightStr}`;
+        }
+    }
+}
+
+nextBtn.onclick = ()=>{
+    nowIdx++;
+    if(nowIdx >= questionList.length){
+        tipDom.innerText="🎉恭喜全部闯关完成！";
+        return;
+    }
+    render();
+}
+resetBtn.onclick = render;
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三年级PEP英语拼句PK游戏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#3478f6;min-height:100vh;padding:30px 15px;color:#fff}
+.wrap{max-width:520px;margin:0 auto}
+.title-top{text-align:center;font-size:20px;margin-bottom:10px}
+.question-box{background:#fff;color:#222;border-radius:16px;padding:20px;text-align:center;margin-bottom:30px}
+.chs{font-size:19px;margin-bottom:8px}
+.put-area{min-height:55px;border-bottom:2px dashed #fff;margin-bottom:35px;display:flex;gap:8px;justify-content:center;align-items:center}
+.put-word{background:#fff;color:#3478f6;padding:7px 14px;border-radius:6px;font-size:17px}
+.opt-box{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.opt-btn{background:#fff;color:#333;border:none;border-radius:8px;padding:10px 16px;font-size:17px;margin-right: 10px}
+.ctrl-box{display:flex;gap:12px;justify-content:center;margin-top:35px}
+#next,#reset,.current,.reset{padding:11px 22px;border:none;border-radius:9px;font-size:16px}
+#next,.current{background:#ffc82e;color:#222}
+#reset,.reset{background:#eeeeee;color:#333}
+.tip{text-align:center;margin-top:16px;font-size:16px;height:22px}
+.right{color:#9cfc79}
+.wrong{color:#ff7d7d}
+.box{display:flex;gap:12px;justify-content:center;margin-bottom:10px}
+.box button,.ctrl-box button{
+    margin-right: 10px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="title-top">单词拼句子</div>
+    <div class="box">
+        <button onclick="jump('三上短语练习.html')" class="current">三上短语</button>
+        <button onclick="jump('三上句子练习.html')" class="reset">三上句子</button>
+        <button onclick="jump('三下短语练习.html')" class="reset">三下短语</button>
+        <button onclick="jump('三下句子练习.html')" class="reset">三下句子</button>
+        <button onclick="jump('main.html')" class="reset">返回单词练习</button>
+    </div>
+    <div class="question-box">
+        <div class="chs" id="zhText"></div>
+    </div>
+    <div class="put-area" id="fillBox"></div>
+    <div class="opt-box" id="optionBox"></div>
+    <div class="ctrl-box">
+        <button id="next">下一题</button>
+        <button id="reset">清空本题</button>
+    </div>
+    <div class="tip" id="tipText"></div>
+</div>
+
+<script>
+// 全量题库：原有内容 + 本次新增期末短语+Appendix4课本句型
+const questionList = [
+    //Unit1短语
+    {cn:"分享书",ans:"share books",words:["share","books"]},
+    {cn:"分享食物",ans:"share food",words:["share","food"]},
+    {cn:"一个好朋友",ans:"a good friend",words:["a","good","friend"]},
+    {cn:"公平",ans:"play fair",words:["play","fair"]},
+    {cn:"一起玩",ans:"play together",words:["play","together"]},
+    {cn:"指向",ans:"point to",words:["point","to"]},
+    {cn:"挥动你的胳膊",ans:"wave your arm",words:["wave","your","arm"]},
+    {cn:"分享玩具",ans:"share toys",words:["share","toys"]},
+    {cn:"倾听",ans:"listen with care",words:["listen","with","care"]},
+    {cn:"握手",ans:"shake hands",words:["shake","hands"]},
+    {cn:"交朋友",ans:"make friends",words:["make","friends"]},
+    {cn:"相互帮助",ans:"help each other",words:["help","each","other"]},
+    {cn:"看着",ans:"look into",words:["look","into"]},
+    {cn:"挥动你的手",ans:"wave your hand",words:["wave","your","hand"]},
+    //Unit2短语
+    {cn:"和…一起玩",ans:"play with",words:["play","with"]},
+    {cn:"爱彼此",ans:"love each other",words:["love","each","other"]},
+    {cn:"家谱",ans:"a family tree",words:["a","family","tree"]},
+    {cn:"你的姐姐",ans:"your sister",words:["your","sister"]},
+    {cn:"和…分享",ans:"share with",words:["share","with"]},
+    {cn:"家人之爱",ans:"family love",words:["family","love"]},
+    {cn:"和…交谈",ans:"talk with",words:["talk","with"]},
+    {cn:"一个大家庭",ans:"a big family",words:["a","big","family"]},
+    {cn:"不同的家庭",ans:"different families",words:["different","families"]},
+    //Unit3短语
+    {cn:"野生动物",ans:"wild animals",words:["wild","animals"]},
+    {cn:"你的狗",ans:"your dog",words:["your","dog"]},
+    {cn:"宠物店",ans:"pet shop",words:["pet","shop"]},
+    {cn:"神奇的动物",ans:"amazing animals",words:["amazing","animals"]},
+    {cn:"像兔子一样跳",ans:"hop like a rabbit",words:["hop","like","a","rabbit"]},
+    {cn:"一本动物图册",ans:"an animal picture book",words:["an","animal","picture","book"]},
+    {cn:"有一个宠物",ans:"have a pet",words:["have","a","pet"]},
+    {cn:"去动物园",ans:"go to the zoo",words:["go","to","the","zoo"]},
+    {cn:"一只小熊猫",ans:"a red panda",words:["a","red","panda"]},
+    {cn:"像一条狗一样跑",ans:"run like a dog",words:["run","like","a","dog"]},
+    {cn:"像鸟一样唱歌",ans:"sing like a bird",words:["sing","like","a","bird"]},
+    {cn:"像鱼一样游",ans:"swim like a fish",words:["swim","like","a","fish"]},
+    //Unit4短语
+    {cn:"喜欢农场",ans:"like the farm",words:["like","the","farm"]},
+    {cn:"很多东西",ans:"many things",words:["many","things"]},
+    {cn:"种树",ans:"plant trees",words:["plant","trees"]},
+    {cn:"给我们苹果",ans:"give us apples",words:["give","us","apples"]},
+    {cn:"做一些卡片",ans:"make some cards",words:["make","some","cards"]},
+    {cn:"浇花",ans:"water the flowers",words:["water","the","flowers"]},
+    {cn:"果树",ans:"fruit tree",words:["fruit","tree"]},
+    {cn:"新鲜空气",ans:"fresh air",words:["fresh","air"]},
+    {cn:"学校花园",ans:"the school gardens",words:["the","school","gardens"]},
+    {cn:"帮助植物生长",ans:"help plants grow",words:["help","plants","grow"]},
+    //Unit5短语
+    {cn:"不同的颜色",ans:"different colours",words:["different","colours"]},
+    {cn:"蓝色的海",ans:"blue sea",words:["blue","sea"]},
+    {cn:"画一些花",ans:"draw some flowers",words:["draw","some","flowers"]},
+    {cn:"坐下",ans:"sit down",words:["sit","down"]},
+    {cn:"摸摸地面",ans:"touch the ground",words:["touch","the","ground"]},
+    {cn:"青草",ans:"green grass",words:["green","grass"]},
+    {cn:"一只棕色的熊",ans:"a brown bear",words:["a","brown","bear"]},
+    {cn:"到处",ans:"here and there",words:["here","and","there"]},
+    {cn:"转个圈",ans:"turn around",words:["turn","around"]},
+    {cn:"上下跳",ans:"jump up and down",words:["jump","up","and","down"]},
+    //Unit6短语
+    {cn:"多少岁",ans:"how old",words:["how","old"]},
+    {cn:"使用数字",ans:"use numbers",words:["use","numbers"]},
+    {cn:"吃蛋糕",ans:"eat cake",words:["eat","cake"]},
+    {cn:"两条腿",ans:"two legs",words:["two","legs"]},
+    {cn:"生日快乐",ans:"happy birthday",words:["happy","birthday"]},
+    {cn:"数数",ans:"count",words:["count"]},
+    {cn:"有用的数字",ans:"useful numbers",words:["useful","numbers"]},
+    {cn:"生日卡片",ans:"birthday card",words:["birthday","card"]},
+    {cn:"多少个",ans:"how many",words:["how","many"]},
+    {cn:"跳起来",ans:"jump up",words:["jump","up"]},
+    {cn:"十元钱",ans:"ten yuan",words:["ten","yuan"]},
+    {cn:"五岁",ans:"five years old",words:["five","years","old"]},
+    {cn:"去商店",ans:"go to the shop",words:["go","to","the","shop"]},
+    {cn:"从一到十",ans:"from one to ten",words:["from","one","to","ten"]},
+    {cn:"怎么样",ans:"what about",words:["what","about"]},
+];
+
+let nowIdx = 0;
+let selectedArr = [];
+
+const zhDom = document.getElementById("zhText");
+const fillDom = document.getElementById("fillBox");
+const optDom = document.getElementById("optionBox");
+const tipDom = document.getElementById("tipText");
+const nextBtn = document.getElementById("next");
+const resetBtn = document.getElementById("reset");
+
+function jump(url){
+    window.location.href = url;
+        }
+
+function render(){
+    tipDom.textContent = "";
+    selectedArr = [];
+    const item = questionList[nowIdx];
+    zhDom.innerText = item.cn;
+    fillDom.innerHTML = "";
+    optDom.innerHTML = "";
+    let randomWords = [...item.words].sort(()=>Math.random()-0.5);
+    randomWords.forEach(word=>{
+        let btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.innerText = word;
+        btn.onclick = ()=>addWord(word,btn);
+        optDom.appendChild(btn);
+    })
+}
+
+function addWord(word,btn){
+    selectedArr.push(word);
+    let span = document.createElement("span");
+    span.className = "put-word";
+    span.innerText = word;
+    fillDom.appendChild(span);
+    btn.disabled = true;
+    btn.style.opacity="0.3";
+
+    const rightStr = questionList[nowIdx].ans;
+    const userStr = selectedArr.join(" ");
+    if(selectedArr.length === questionList[nowIdx].words.length){
+        if(userStr === rightStr){
+            tipDom.className="tip right";
+            tipDom.innerText="✅ 拼句正确！";
+            const utter = new SpeechSynthesisUtterance('红豆真棒');
+            utter.lang = "zh-CN";
+            speechSynthesis.speak(utter);
+        }else{
+            tipDom.className="tip wrong";
+            tipDom.innerText=`❌ 错误，正确：${rightStr}`;
+        }
+    }
+}
+
+nextBtn.onclick = ()=>{
+    nowIdx++;
+    if(nowIdx >= questionList.length){
+        tipDom.innerText="🎉恭喜全部闯关完成！";
+        return;
+    }
+    render();
+}
+resetBtn.onclick = render;
+
+render();
+</script>
+</body>
+</html>

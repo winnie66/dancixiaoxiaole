@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三年级PEP英语拼句PK游戏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#3478f6;min-height:100vh;padding:30px 15px;color:#fff}
+.wrap{max-width:520px;margin:0 auto}
+.title-top{text-align:center;font-size:20px;margin-bottom:10px}
+.question-box{background:#fff;color:#222;border-radius:16px;padding:20px;text-align:center;margin-bottom:30px}
+.chs{font-size:19px;margin-bottom:8px}
+.put-area{min-height:55px;border-bottom:2px dashed #fff;margin-bottom:35px;display:flex;gap:8px;justify-content:center;align-items:center}
+.put-word{background:#fff;color:#3478f6;padding:7px 14px;border-radius:6px;font-size:17px}
+.opt-box{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.opt-btn{background:#fff;color:#333;border:none;border-radius:8px;padding:10px 16px;font-size:17px;margin-right: 10px}
+.ctrl-box{display:flex;gap:12px;justify-content:center;margin-top:35px}
+#next,#reset,.current,.reset{padding:11px 22px;border:none;border-radius:9px;font-size:16px}
+#next,.current{background:#ffc82e;color:#222}
+#reset,.reset{background:#eeeeee;color:#333}
+.tip{text-align:center;margin-top:16px;font-size:16px;height:22px}
+.right{color:#9cfc79}
+.wrong{color:#ff7d7d}
+.box{display:flex;gap:12px;justify-content:center;margin-bottom:10px}
+.box button,.ctrl-box button{
+    margin-right: 10px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="title-top">单词拼句子</div>
+    <div class="box">
+        <button onclick="jump('三上短语练习.html')" class="reset">三上短语</button>
+        <button onclick="jump('三上句子练习.html')" class="reset">三上句子</button>
+        <button onclick="jump('三下短语练习.html')" class="reset">三下短语</button>
+        <button onclick="jump('三下句子练习.html')" class="current">三下句子</button>
+        <button onclick="jump('main.html')" class="reset">返回单词练习</button>
+    </div>
+    <div class="question-box">
+        <div class="chs" id="zhText"></div>
+    </div>
+    <div class="put-area" id="fillBox"></div>
+    <div class="opt-box" id="optionBox"></div>
+    <div class="ctrl-box">
+        <button id="next">下一题</button>
+        <button id="reset">清空本题</button>
+    </div>
+    <div class="tip" id="tipText"></div>
+</div>
+
+<script>
+// 全量题库：原有内容 + 本次新增期末短语+Appendix4课本句型
+const questionList = [
+    //三下句子
+    //Unit1 Appendix4
+    {cn:"你叫什么名字？",ans:"What's your name",words:["What's","your","name"]},
+    {cn:"我叫埃米·格林。",ans:"My name's Amy Green",words:["My","name's","Amy","Green"]},
+    {cn:"你是哪里人？",ans:"Where are you from",words:["Where","are","you","from"]},
+    {cn:"我是英国人。",ans:"I'm from the UK",words:["I'm","from","the","UK"]},
+    {cn:"我来帮忙。",ans:"Let me help",words:["Let","me","help"]},
+    {cn:"您先请！",ans:"After you",words:["After","you"]},
+    {cn:"别客气。",ans:"You're welcome",words:["You're","welcome"]},
+    {cn:"那个女孩是谁？",ans:"Who's that girl",words:["Who's","that","girl"]},
+    {cn:"是我们的新邻居埃米。",ans:"That's our new neighbour Amy",words:["That's","our","new","neighbour","Amy"]},
+    {cn:"你经常对妈妈那么说吗？",ans:"Do you often say that to your mum",words:["Do","you","often","say","that","to","your","mum"]},
+    {cn:"是的。",ans:"Yes I do",words:["Yes","I","do"]},
+    {cn:"我经常给她做礼物。",ans:"I often make her gifts",words:["I","often","make","her","gifts"]},
+    {cn:"我们用很多种方式表达自己。",ans:"We express ourselves in many ways",words:["We","express","ourselves","in","many","ways"]},
+    //Unit2 Appendix4
+    {cn:"它有长长的身体和短短的腿。",ans:"It has a long body and short legs",words:["It","has","a","long","body","and","short","legs"]},
+    {cn:"狗是友善的。",ans:"Dogs are friendly",words:["Dogs","are","friendly"]},
+    //Unit3 Appendix4
+    {cn:"劳驾。",ans:"Excuse me",words:["Excuse","me"]},
+    {cn:"我能用一下你的橡皮吗？",ans:"Can I use your eraser please",words:["Can","I","use","your","eraser","please"]},
+    {cn:"当然。给你。",ans:"Sure Here you are",words:["Sure","Here","you","are"]},
+    {cn:"没问题。",ans:"No problem",words:["No","problem"]},
+    {cn:"这些是什么？",ans:"What are these",words:["What","are","these"]},
+    {cn:"是葡萄。",ans:"They're grapes",words:["They're","grapes"]},
+    {cn:"这个呢？",ans:"What about this",words:["What","about","this"]},
+    //Unit4 Appendix4
+    {cn:"我想吃点儿面包和鸡蛋。",ans:"I'd like some bread and eggs please",words:["I'd","like","some","bread","and","eggs","please"]},
+    {cn:"也喝点儿牛奶吧。",ans:"Have some milk too",words:["Have","some","milk","too"]},
+    {cn:"要吃点儿米饭和肉吗？",ans:"Would you like some rice and meat",words:["Would","you","like","some","rice","and","meat"]},
+    {cn:"好的，谢谢。",ans:"Yes please",words:["Yes","please"]},
+    {cn:"每天吃一些吧！",ans:"Eat some every day",words:["Eat","some","every","day"]},
+    //Unit5 Appendix4
+    {cn:"你有旧东西吗？",ans:"Do you have old things",words:["Do","you","have","old","things"]},
+    {cn:"是的，我有些旧书。",ans:"Yes I do I have some old books",words:["Yes","I","do","I","have","some","old","books"]},
+    {cn:"这只船很酷。",ans:"This boat is cool",words:["This","boat","is","cool"]},
+    {cn:"你可以留着它。",ans:"You can keep it",words:["You","can","keep","it"]},
+    {cn:"妈妈，我的动物书在哪儿？",ans:"Mum where is my animal book",words:["Mum","where","is","my","animal","book"]},
+    {cn:"在架子上吗？",ans:"Is it on the shelf",words:["Is","it","on","the","shelf"]},
+    {cn:"不，不在。",ans:"No it isn't",words:["No","it","isn't"]},
+    {cn:"它在盒子里。",ans:"It's in the box",words:["It's","in","the","box"]},
+    //Unit6 Appendix4
+    {cn:"我们有多少本书？",ans:"How many books do we have",words:["How","many","books","do","we","have"]},
+    {cn:"我们有十五本书。",ans:"We have fifteen books",words:["We","have","fifteen","books"]},
+    {cn:"我们需要多少个箱子？",ans:"How many boxes do we need",words:["How","many","boxes","do","we","need"]},
+    {cn:"我们需要三个箱子。",ans:"We need three boxes",words:["We","need","three","boxes"]},
+    {cn:"这个包多少钱？",ans:"How much is this bag",words:["How","much","is","this","bag"]},
+    {cn:"二十元。",ans:"It's twenty yuan",words:["It's","twenty","yuan"]},
+    {cn:"六元，或者十七元三本。",ans:"Six yuan or three for seventeen yuan",words:["Six","yuan","or","three","for","seventeen","yuan"]},
+    {cn:"十六元三本行吗？",ans:"How about three for sixteen yuan",words:["How","about","three","for","sixteen","yuan"]}
+];
+
+let nowIdx = 0;
+let selectedArr = [];
+
+const zhDom = document.getElementById("zhText");
+const fillDom = document.getElementById("fillBox");
+const optDom = document.getElementById("optionBox");
+const tipDom = document.getElementById("tipText");
+const nextBtn = document.getElementById("next");
+const resetBtn = document.getElementById("reset");
+
+function jump(url){
+    window.location.href = url;
+        }
+
+
+function render(){
+    tipDom.textContent = "";
+    selectedArr = [];
+    const item = questionList[nowIdx];
+    zhDom.innerText = item.cn;
+    fillDom.innerHTML = "";
+    optDom.innerHTML = "";
+    let randomWords = [...item.words].sort(()=>Math.random()-0.5);
+    randomWords.forEach(word=>{
+        let btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.innerText = word;
+        btn.onclick = ()=>addWord(word,btn);
+        optDom.appendChild(btn);
+    })
+}
+
+function addWord(word,btn){
+    selectedArr.push(word);
+    let span = document.createElement("span");
+    span.className = "put-word";
+    span.innerText = word;
+    fillDom.appendChild(span);
+    btn.disabled = true;
+    btn.style.opacity="0.3";
+
+    const rightStr = questionList[nowIdx].ans;
+    const userStr = selectedArr.join(" ");
+    if(selectedArr.length === questionList[nowIdx].words.length){
+        if(userStr === rightStr){
+            tipDom.className="tip right";
+            tipDom.innerText="✅ 拼句正确！";
+            const utter = new SpeechSynthesisUtterance('红豆真棒');
+            utter.lang = "zh-CN";
+            speechSynthesis.speak(utter);
+        }else{
+            tipDom.className="tip wrong";
+            tipDom.innerText=`❌ 错误，正确：${rightStr}`;
+        }
+    }
+}
+
+nextBtn.onclick = ()=>{
+    nowIdx++;
+    if(nowIdx >= questionList.length){
+        tipDom.innerText="🎉恭喜全部闯关完成！";
+        return;
+    }
+    render();
+}
+resetBtn.onclick = render;
+
+render();
+</script>
+</body>
+</html>
